@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dota Test</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#1a1040;--bg2:#070b1f;--card:rgba(10,22,40,.72);--gold:#ffd36b;--text:#eef1ff;--muted:#9aa3c7;--red:#ff6b5b;--green:#3ddc84;--blue:#5bb8ff}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:Rubik,system-ui,sans-serif;color:var(--text);background:radial-gradient(120% 80% at 50% 0%,#3b2a7a 0%,var(--bg1) 40%,var(--bg2) 100%) fixed;
+  padding:env(safe-area-inset-top,0) 0 0}
+#app{max-width:480px;margin:0 auto;padding:14px 14px 110px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.who{display:flex;align-items:center;gap:10px}
+.ava{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ffb347,#ff5e62);display:grid;place-items:center;font-size:22px;border:2px solid var(--gold)}
+.who b{display:block;font-weight:800;font-size:20px;letter-spacing:.5px;text-transform:uppercase;text-shadow:0 0 12px #5b6cff}
+.who small{color:var(--muted);font-size:11px;letter-spacing:2px}
+.coins{background:var(--card);border:1.5px solid rgba(255,107,91,.6);border-radius:20px;padding:8px 14px;font-weight:800;color:var(--gold)}
+h2{font-weight:800;text-transform:uppercase;font-size:26px;margin:6px 0 12px;text-shadow:0 0 14px #5b6cff,2px 2px 0 #1b2a8a}
+.card{background:var(--card);backdrop-filter:blur(8px);border:2px solid rgba(255,107,91,.65);border-radius:22px;padding:16px;margin-bottom:14px;
+  box-shadow:0 0 22px rgba(91,108,255,.18);display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform .15s}
+.card:active{transform:scale(.98)}
+.card.green{border-color:rgba(61,220,132,.8)}.card.gold{border-color:rgba(200,200,200,.6)}
+.card .ico{font-size:54px;filter:drop-shadow(0 0 10px rgba(255,255,255,.3))}
+.tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:12px;background:rgba(91,184,255,.2);color:var(--blue);margin-bottom:6px}
+.tag.g{background:rgba(61,220,132,.2);color:var(--green)}.tag.p{background:rgba(255,110,200,.2);color:#ff7ac8}
+.card h3{font-weight:800;text-transform:uppercase;font-size:20px;line-height:1.1;margin-bottom:5px}
+.card p{color:var(--muted);font-size:13px;line-height:1.35}
+.search,.inp{width:100%;background:var(--card);border:1.5px solid rgba(255,255,255,.18);border-radius:16px;padding:13px 15px;color:var(--text);font:inherit;margin-bottom:12px;outline:none}
+.search:focus,.inp:focus{border-color:var(--blue)}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid rgba(255,255,255,.1);border-radius:16px;padding:8px 12px;margin-bottom:8px}
+.row .n{width:26px;color:var(--muted);font-weight:800;text-align:center}
+.row img{width:64px;height:36px;object-fit:cover;border-radius:8px;background:#122}
+.ph{width:64px;height:36px;border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:18px;background:linear-gradient(135deg,#3b2a7a,#5bb8ff)}
+.row .nm{flex:1;font-weight:500}.row small{display:block;color:var(--muted);font-size:11px}
+.wr{font-weight:800;font-size:17px}.hi{color:var(--green)}.lo{color:var(--red)}
+.btn{width:100%;border:0;border-radius:16px;padding:14px;font:inherit;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#1a1040;background:linear-gradient(180deg,#ffe29a,#ffb347);box-shadow:0 0 18px rgba(255,179,71,.4);cursor:pointer}
+.stats{display:flex;justify-content:space-around;text-align:center;margin-top:6px}
+.stats b{display:block;font-size:26px;font-weight:800}.stats span{color:var(--muted);font-size:11px;letter-spacing:1px}
+.prof{flex-direction:column;align-items:stretch;cursor:default}
+.muted{color:var(--muted);font-size:13px;text-align:center;margin:12px 0}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0));width:min(452px,calc(100% - 20px));
+  display:flex;background:rgba(14,12,40,.92);backdrop-filter:blur(12px);border:2px solid rgba(255,255,255,.15);border-radius:28px;padding:8px;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+nav button{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:8px 0;border-radius:20px;cursor:pointer}
+nav button span{display:block;font-size:24px;margin-bottom:2px}
+nav button.on{color:var(--gold);background:rgba(255,211,107,.12);border:1.5px solid rgba(255,211,107,.5)}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#000c;border:1.5px solid var(--gold);color:var(--gold);padding:10px 18px;border-radius:14px;font-weight:800;z-index:9}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top">
+    <div class="who"><div class="ava">🐺</div><div><b id="uname">Игрок</b><small>DOTA 2 META</small></div></div>
+    <div class="coins">💎 <span id="coins">0</span></div>
+  </div>
+  <div id="view"></div>
+</div>
+<nav>
+  <button data-t="meta"><span>⚔️</span>Мета</button>
+  <button data-t="serv"><span>🎁</span>Сервисы</button>
+  <button data-t="prof"><span>👤</span>Профиль</button>
+</nav>
+
+<script>
+const tg = window.Telegram && Telegram.WebApp;
+if (tg) { tg.ready(); tg.expand(); try { tg.setHeaderColor('#1a1040'); tg.setBackgroundColor('#070b1f'); } catch (e) {} }
+const API = 'https://api.opendota.com/api';
+const IMG_SRC = ['heroes/', 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/', 'https://cdn.akamai.steamstatic.com/apps/dota2/images/dota_react/heroes/', 'https://cdn.dota2.com/apps/dota2/images/heroes/'];
+function imgFail(el) {
+  const i = +el.dataset.i + 1, n = el.dataset.n;
+  if (i < IMG_SRC.length) { el.dataset.i = i; el.src = IMG_SRC[i] + n + (i === 3 ? '_lg.png' : '.png'); }
+  else { const d = document.createElement('div'); d.className = 'ph'; d.textContent = el.dataset.l; el.replaceWith(d); }
+}
+const $ = s => document.querySelector(s);
+const store = {
+  get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v === null ? d : v; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const FALLBACK = [['Axe','axe',54.2,3100],['Lion','lion',53.4,2800],['Pudge','pudge',52.9,4200],['Juggernaut','juggernaut',52.1,3900],['Earthshaker','earthshaker',51.8,1900],['Sniper','sniper',50.6,2500]]
+  .map(a => ({ n: a[0], img: a[1], wr: a[2], p: a[3] }));
+const MEDALS = ['', 'Herald', 'Guardian', 'Crusader', 'Archon', 'Legend', 'Ancient', 'Divine', 'Immortal'];
+let heroes = null, tab = 'meta', q = '';
+let st = { coins: store.get('coins', 0), streak: store.get('streak', 0), last: store.get('last', '') };
+
+if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) $('#uname').textContent = tg.initDataUnsafe.user.first_name;
+const setCoins = () => { $('#coins').textContent = st.coins; };
+function toast(t) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+async function loadHeroes() {
+  try {
+    const d = await (await fetch(API + '/heroStats')).json();
+    heroes = d.filter(h => h['7_pick'] > 200).map(h => ({ n: h.localized_name, img: h.name.replace('npc_dota_hero_', ''), wr: h['7_win'] / h['7_pick'] * 100, p: h['7_pick'] })).sort((a, b) => b.wr - a.wr);
+  } catch (e) { heroes = FALLBACK; }
+  if (tab === 'meta') render();
+}
+
+function viewMeta() {
+  if (!heroes) { loadHeroes(); return '<h2>Мета</h2><p class="muted">Загружаю героев…</p>'; }
+  const list = heroes.filter(h => h.n.toLowerCase().includes(q.toLowerCase())).slice(0, 40);
+  return '<h2>Мета героев</h2><input class="search" id="q" placeholder="Поиск героя" value="' + esc(q) + '">' +
+    list.map((h, i) => '<div class="row"><div class="n">' + (i + 1) + '</div><img src="' + IMG_SRC[0] + h.img + '.png" data-i="0" data-n="' + h.img + '" data-l="' + esc(h.n[0]) + '" alt="" onerror="imgFail(this)">' +
+      '<div class="nm">' + esc(h.n) + '<small>' + h.p + ' игр</small></div><div class="wr ' + (h.wr >= 50 ? 'hi' : 'lo') + '">' + h.wr.toFixed(1) + '%</div></div>').join('') +
+    '<p class="muted">Винрейт на рангах Divine и выше · OpenDota</p>';
+}
+
+function viewServ() {
+  const today = new Date().toDateString(), got = st.last === today;
+  return '<h2>Сервисы</h2>' +
+    '<div class="card"><div class="ico">🎄</div><div><span class="tag">Сезон до 31.12</span><h3>Новогодний компендиум</h3><p>Квесты каждый день, кристаллы в топ и призы.</p></div></div>' +
+    '<div class="card green" id="daily"><div class="ico">🎁</div><div><span class="tag g">' + (got ? 'Получено сегодня' : 'Доступно') + '</span><h3>Ежедневная награда</h3><p>Кристаллы за каждый день подряд · серия: 🔥 ' + st.streak + '</p></div></div>' +
+    '<div class="card gold" id="draft"><div class="ico">🗡️</div><div><h3>Драфтер</h3><p>Подбор героя под драфт: винрейты пар с союзниками и против врагов.</p></div></div>' +
+    '<div class="card"><div class="ico">🧪</div><div><span class="tag p">Ивент</span><h3>Калькулятор</h3><p>Считай золото, урон и тайминги предметов.</p></div></div>';
+}
+
+function viewProf() {
+  return '<h2>Профиль</h2><input class="inp" id="aid" inputmode="numeric" placeholder="Твой Dota ID" value="' + esc(store.get('aid', '')) + '">' +
+    '<button class="btn" id="go">Показать статистику</button><div id="pres" style="margin-top:14px"></div>' +
+    '<p class="muted">Профиль Dota должен быть открыт: Настройки → Социальные → Публичные данные матчей.</p>';
+}
+
+async function showProfile() {
+  let id = $('#aid').value.trim();
+  if (!/^\d+$/.test(id)) { toast('Введи число'); return; }
+  if (BigInt(id) > 76561197960265728n) id = String(BigInt(id) - 76561197960265728n);
+  store.set('aid', id);
+  const box = $('#pres'); box.innerHTML = '<p class="muted">Загружаю…</p>';
+  try {
+    const [p, wl] = await Promise.all([fetch(API + '/players/' + id).then(r => r.json()), fetch(API + '/players/' + id + '/wl').then(r => r.json())]);
+    if (!p.profile) { box.innerHTML = '<p class="muted">Профиль не найден или скрыт.</p>'; return; }
+    const tot = wl.win + wl.lose, wr = tot ? wl.win / tot * 100 : 0;
+    const rt = p.rank_tier ? Math.floor(p.rank_tier / 10) : 0, stars = p.rank_tier ? p.rank_tier % 10 : 0;
+    box.innerHTML = '<div class="card prof"><h3>' + esc(p.profile.personaname || 'Без имени') + '</h3>' +
+      '<div class="stats"><div><b>' + (rt ? MEDALS[rt] + (rt < 8 ? ' ' + stars : '') : '—') + '</b><span>РАНГ</span></div>' +
+      '<div><b class="' + (wr >= 50 ? 'hi' : 'lo') + '">' + wr.toFixed(1) + '%</b><span>ВИНРЕЙТ</span></div><div><b>' + tot + '</b><span>МАТЧЕЙ</span></div></div></div>';
+  } catch (e) { box.innerHTML = '<p class="muted">OpenDota не отвечает, попробуй позже.</p>'; }
+}
+
+function render() {
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+  $('#view').innerHTML = tab === 'meta' ? viewMeta() : tab === 'serv' ? viewServ() : viewProf();
+  setCoins();
+  if (tab === 'meta' && $('#q')) {
+    const el = $('#q');
+    el.oninput = () => { q = el.value; const pos = el.selectionStart; render(); const n = $('#q'); n.focus(); n.setSelectionRange(pos, pos); };
+  }
+  if (tab === 'serv') {
+    $('#daily').onclick = () => {
+      const today = new Date().toDateString();
+      if (st.last === today) { toast('Уже получено сегодня'); return; }
+      const yest = new Date(Date.now() - 864e5).toDateString();
+      st.streak = st.last === yest ? st.streak + 1 : 1;
+      st.last = today; st.coins += 100;
+      store.set('coins', st.coins); store.set('streak', st.streak); store.set('last', st.last);
+      toast('+100 💎'); render();
+    };
+    $('#draft').onclick = () => toast('Драфтер скоро будет');
+  }
+  if (tab === 'prof') $('#go').onclick = showProfile;
+}
+
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => { tab = b.dataset.t; render(); window.scrollTo(0, 0); });
+render();
+</script>
+</body>
+</html>
